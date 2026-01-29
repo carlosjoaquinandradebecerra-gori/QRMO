@@ -1,209 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>QRMO Token (Sepolia) — Mini DApp</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QRMO Rewards | Moda que te recompensa</title>
+  <meta name="description" content="Compra ropa y gana recompensas con QRMO Token usando MetaMask." />
 
-  <!-- Ethers v6 (CDN) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
-
+  <!-- Estilos básicos -->
   <style>
-    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;background:#0b0f14;color:#e8eef6}
-    .wrap{max-width:920px;margin:0 auto;padding:24px}
-    .card{background:#121a24;border:1px solid #233244;border-radius:16px;padding:18px;margin:14px 0}
-    h1{margin:0 0 10px;font-size:22px}
-    h2{margin:0 0 10px;font-size:16px;color:#b9c7d8}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    button{cursor:pointer;background:#1f6feb;border:none;color:white;padding:10px 12px;border-radius:12px;font-weight:600}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a3a4f;background:#0b0f14;color:#e8eef6}
-    .muted{color:#9bb0c7;font-size:13px}
-    .ok{color:#7CFC98}
-    .bad{color:#ff8a8a}
-    code{background:#0b0f14;border:1px solid #2a3a4f;border-radius:8px;padding:2px 6px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:780px){.grid{grid-template-columns:1fr}}
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+    body { background: #0f172a; color: #e5e7eb; line-height: 1.6; }
+    a { color: #38bdf8; text-decoration: none; }
+
+    header { background: linear-gradient(135deg, #1e3a8a, #0ea5e9); padding: 80px 20px; text-align: center; }
+    header h1 { font-size: 3rem; margin-bottom: 15px; }
+    header p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 30px; }
+
+    .btn {
+      display: inline-block;
+      background: #22c55e;
+      color: #022c22;
+      padding: 14px 26px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .btn:hover { background: #16a34a; transform: scale(1.05); }
+
+    section { padding: 70px 20px; max-width: 1100px; margin: auto; }
+    h2 { font-size: 2.2rem; margin-bottom: 25px; text-align: center; }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .steps ol { max-width: 700px; margin: auto; }
+    .steps li { margin-bottom: 15px; }
+
+    .metamask {
+      background: #111827;
+      text-align: center;
+      border-radius: 16px;
+      padding: 50px 20px;
+    }
+
+    footer {
+      background: #020617;
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
   </style>
 </head>
-
 <body>
-<div class="wrap">
-  <h1>QRMO Token — Sepolia (Demo Web)</h1>
-  <p class="muted">
-    Esto es una mini DApp estática: lee tu balance y permite transferir QRMO usando MetaMask.
-  </p>
 
-  <div class="card">
-    <h2>1) Conectar MetaMask</h2>
-    <div class="row">
-      <button id="btnConnect">Conectar</button>
-      <button id="btnSwitch" title="Intenta cambiar a Sepolia si estás en otra red">Cambiar a Sepolia</button>
-    </div>
-    <p class="muted">Cuenta: <span id="account">—</span></p>
-    <p class="muted">Red: <span id="network">—</span></p>
-    <p class="muted">Estado: <span id="status">Esperando conexión…</span></p>
-  </div>
+  <!-- HERO -->
+  <header>
+    <h1>Viste con estilo y gana <strong>QRMO Tokens</strong></h1>
+    <p>Compra ropa exclusiva y recibe recompensas en nuestro token QRMO directamente en tu billetera MetaMask.</p>
+    <a href="#recompensas" class="btn">Cómo ganar QRMO</a>
+  </header>
 
-  <div class="card">
-    <h2>2) Balance de QRMO</h2>
-    <div class="row">
-      <button id="btnBalance" disabled>Ver balance</button>
-    </div>
-    <p class="muted">Tu balance: <span id="balance">—</span></p>
-  </div>
-
-  <div class="card">
-    <h2>3) Transferir QRMO</h2>
-    <div class="grid">
-      <div>
-        <label class="muted">Dirección destino</label>
-        <input id="to" placeholder="0x..." />
+  <!-- BENEFICIOS -->
+  <section>
+    <h2>¿Por qué comprar con recompensas QRMO?</h2>
+    <div class="features">
+      <div class="card">
+        <h3>👕 Moda exclusiva</h3>
+        <p>Ropa moderna y de alta calidad diseñada para destacar tu estilo.</p>
       </div>
-      <div>
-        <label class="muted">Cantidad (QRMO)</label>
-        <input id="amount" placeholder="50" />
+      <div class="card">
+        <h3>🪙 Recompensas reales</h3>
+        <p>Cada compra te otorga QRMO Tokens que son tuyos y se guardan en tu wallet.</p>
+      </div>
+      <div class="card">
+        <h3>🔐 Web3 & MetaMask</h3>
+        <p>Usamos tecnología blockchain para que tus recompensas sean seguras y transparentes.</p>
       </div>
     </div>
-    <div class="row" style="margin-top:10px">
-      <button id="btnSend" disabled>Enviar QRMO</button>
-    </div>
-    <p class="muted">Tx: <span id="tx">—</span></p>
-  </div>
+  </section>
 
-  <div class="card">
-    <h2>Datos del contrato</h2>
-    <p class="muted">Contrato: <code id="caddr"></code></p>
-    <p class="muted">Tip: tus alumnos solo cambian la dirección y listo.</p>
-  </div>
-</div>
+  <!-- CÓMO FUNCIONA -->
+  <section id="recompensas" class="steps">
+    <h2>¿Cómo obtener tus recompensas QRMO?</h2>
+    <ol>
+      <li>Crea o accede a tu billetera <strong>MetaMask</strong>.</li>
+      <li>Compra ropa en nuestra tienda online.</li>
+      <li>Ingresa tu dirección de MetaMask al finalizar la compra.</li>
+      <li>Recibe automáticamente tus <strong>QRMO Tokens</strong> como recompensa.</li>
+      <li>Usa tus QRMO para descuentos, beneficios exclusivos y futuras promociones.</li>
+    </ol>
+  </section>
 
-<script>
-  // ========= 1) CONFIGURA AQUÍ =========
-  const CONTRACT_ADDRESS = "0xTU_CONTRATO_AQUI"; // Dirección del contrato QRMO en Sepolia
+  <!-- METAMASK -->
+  <section class="metamask">
+    <h2>Conecta con MetaMask</h2>
+    <p>Necesitas MetaMask para recibir tus tokens QRMO.</p>
+    <br />
+    <a href="https://metamask.io/download/" target="_blank" class="btn">Instalar MetaMask</a>
+    <br /><br />
+    <p>¿Ya tienes MetaMask? Solo usa tu dirección pública para recibir tus recompensas.</p>
+  </section>
 
-  // ABI mínimo para ERC-20
-  const ABI = [
-    "function balanceOf(address owner) view returns (uint256)",
-    "function transfer(address to, uint256 amount) returns (bool)",
-    "function decimals() view returns (uint8)",
-    "function symbol() view returns (string)"
-  ];
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 QRMO Fashion Rewards. Todos los derechos reservados.</p>
+    <p>QRMO Token es un token de recompensas y no representa un valor financiero.</p>
+  </footer>
 
-  const SEPOLIA_CHAIN_ID = "0xaa36a7";
-
-  // ========= UI =========
-  const elAccount = document.getElementById("account");
-  const elNetwork = document.getElementById("network");
-  const elStatus  = document.getElementById("status");
-  const elBal     = document.getElementById("balance");
-  const elTx      = document.getElementById("tx");
-  document.getElementById("caddr").textContent = CONTRACT_ADDRESS;
-
-  const btnConnect = document.getElementById("btnConnect");
-  const btnSwitch  = document.getElementById("btnSwitch");
-  const btnBalance = document.getElementById("btnBalance");
-  const btnSend    = document.getElementById("btnSend");
-
-  let provider, signer, userAddress, token, decimals = 18, symbol = "QRMO";
-
-  function setStatus(msg, ok=true){
-    elStatus.textContent = msg;
-    elStatus.className = ok ? "ok" : "bad";
-  }
-
-  function requireMetaMask(){
-    if(!window.ethereum){
-      setStatus("No veo MetaMask. Instálalo o abre en un navegador con MetaMask.", false);
-      throw new Error("No MetaMask");
-    }
-  }
-
-  async function refreshNetworkLabel(){
-    const net = await provider.getNetwork();
-    elNetwork.textContent = `${net.name} (chainId: ${net.chainId})`;
-    return net;
-  }
-
-  async function connect(){
-    requireMetaMask();
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-
-    provider = new ethers.BrowserProvider(window.ethereum);
-    signer = await provider.getSigner();
-    userAddress = await signer.getAddress();
-    elAccount.textContent = userAddress;
-
-    const net = await refreshNetworkLabel();
-
-    token = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-
-    try{ decimals = await token.decimals(); }catch(e){}
-    try{ symbol = await token.symbol(); }catch(e){}
-
-    btnBalance.disabled = false;
-    btnSend.disabled = false;
-
-    if (net.chainId !== 11155111n){
-      setStatus("Conectado, pero NO estás en Sepolia. Usa ‘Cambiar a Sepolia’.", false);
-    } else {
-      setStatus(`Conectado ✅ Listo para usar ${symbol} en Sepolia.`);
-    }
-  }
-
-  async function switchToSepolia(){
-    requireMetaMask();
-    try{
-      await window.ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: SEPOLIA_CHAIN_ID }]
-      });
-      if(provider) await refreshNetworkLabel();
-      setStatus("Red cambiada a Sepolia ✅");
-    }catch(err){
-      setStatus("No pude cambiar de red (tal vez Sepolia no está agregada en MetaMask).", false);
-    }
-  }
-
-  async function readBalance(){
-    if(!token || !userAddress) return;
-    const raw = await token.balanceOf(userAddress);
-    const human = ethers.formatUnits(raw, decimals);
-    elBal.textContent = `${human} ${symbol}`;
-    setStatus("Balance leído ✅");
-  }
-
-  async function send(){
-    const to = document.getElementById("to").value.trim();
-    const amount = document.getElementById("amount").value.trim();
-    if(!to || !amount){
-      setStatus("Falta dirección destino o cantidad.", false);
-      return;
-    }
-
-    try{
-      const value = ethers.parseUnits(amount, decimals);
-      setStatus("Abre MetaMask para confirmar la transacción…");
-      const tx = await token.transfer(to, value);
-      elTx.textContent = tx.hash;
-      setStatus("Transacción enviada ✅ Espera confirmación…");
-      await tx.wait();
-      setStatus("Confirmada ✅");
-      await readBalance();
-    }catch(e){
-      setStatus("Transacción cancelada o falló (revisa gas/ETH de test y dirección).", false);
-    }
-  }
-
-  if(window.ethereum){
-    window.ethereum.on("accountsChanged", () => location.reload());
-    window.ethereum.on("chainChanged", () => location.reload());
-  }
-
-  btnConnect.onclick = connect;
-  btnSwitch.onclick  = switchToSepolia;
-  btnBalance.onclick = readBalance;
-  btnSend.onclick    = send;
-</script>
 </body>
 </html>
