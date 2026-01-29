@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>MAK Token (Sepolia) — Mini DApp</title>
+  <title>QRMO Token (Sepolia) — Mini DApp</title>
 
   <!-- Ethers v6 (CDN) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.15.0/ethers.umd.min.js"></script>
@@ -29,9 +29,9 @@
 
 <body>
 <div class="wrap">
-  <h1>MAK Token — Sepolia (Demo Web)</h1>
+  <h1>QRMO Token — Sepolia (Demo Web)</h1>
   <p class="muted">
-    Esto es una mini DApp estática: lee tu balance y permite transferir MAK usando MetaMask.
+    Esto es una mini DApp estática: lee tu balance y permite transferir QRMO usando MetaMask.
   </p>
 
   <div class="card">
@@ -46,7 +46,7 @@
   </div>
 
   <div class="card">
-    <h2>2) Balance de MAK</h2>
+    <h2>2) Balance de QRMO</h2>
     <div class="row">
       <button id="btnBalance" disabled>Ver balance</button>
     </div>
@@ -54,19 +54,19 @@
   </div>
 
   <div class="card">
-    <h2>3) Transferir MAK</h2>
+    <h2>3) Transferir QRMO</h2>
     <div class="grid">
       <div>
         <label class="muted">Dirección destino</label>
         <input id="to" placeholder="0x..." />
       </div>
       <div>
-        <label class="muted">Cantidad (MAK)</label>
+        <label class="muted">Cantidad (QRMO)</label>
         <input id="amount" placeholder="50" />
       </div>
     </div>
     <div class="row" style="margin-top:10px">
-      <button id="btnSend" disabled>Enviar MAK</button>
+      <button id="btnSend" disabled>Enviar QRMO</button>
     </div>
     <p class="muted">Tx: <span id="tx">—</span></p>
   </div>
@@ -80,7 +80,7 @@
 
 <script>
   // ========= 1) CONFIGURA AQUÍ =========
-  const CONTRACT_ADDRESS = "0xTU_CONTRATO_AQUI";   // <-- pega tu address de Sepolia
+  const CONTRACT_ADDRESS = "0x97Ad6C7064471DD482d935575Df3E5B758DB8133";   // <-- pega tu address de Sepolia
 
   // ABI mínimo para ERC-20 (balanceOf, transfer, decimals, symbol)
   const ABI = [
@@ -91,7 +91,7 @@
   ];
 
   // Sepolia chainId en hex:
-  const SEPOLIA_CHAIN_ID = "0xaa36a7";
+  const SEPOLIA_CHAIN_ID = "0x60806040";
 
   // ========= UI =========
   const elAccount = document.getElementById("account");
