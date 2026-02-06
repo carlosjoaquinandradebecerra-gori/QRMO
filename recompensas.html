@@ -58,5 +58,135 @@
 </section>
 
 <script src="KB&BToken.js"></script>
+<script>
+  // ========= 1) CONFIGURA AQUÍ =========
+  const CONTRACT_ADDRESS = "0x0e54f23dff43ff979150548a3473e02474dc9e7d";   // <-- pega tu address de Sepolia
+
+  // ABI mínimo para ERC-20 (balanceOf, transfer, decimals, symbol)
+  const ABI = [
+    "function balanceOf(address owner) view returns (uint256)",
+    "function transfer(address to, uint256 amount) returns (bool)",
+    "function decimals() view returns (uint8)",
+    "function symbol() view returns (string)"
+  ];
+
+  // Sepolia chainId en hex:
+  const SEPOLIA_CHAIN_ID = "0xaa36a7";
+
+  // ========= UI =========
+  const elAccount = document.getElementById("account");
+  const elNetwork = document.getElementById("network");
+  const elStatus  = document.getElementById("status");
+  const elBal     = document.getElementById("balance");
+  const elTx      = document.getElementById("tx");
+  document.getElementById("caddr").textContent = CONTRACT_ADDRESS;
+
+  const btnConnect = document.getElementById("btnConnect");
+  const btnSwitch  = document.getElementById("btnSwitch");
+  const btnBalance = document.getElementById("btnBalance");
+  const btnSend    = document.getElementById("btnSend");
+
+  let provider, signer, userAddress, token, decimals = 18, symbol = "TOKEN";
+
+  function setStatus(msg, ok=true){
+    elStatus.textContent = msg;
+    elStatus.className = ok ? "ok" : "bad";
+  }
+
+  function requireMetaMask(){
+    if(!window.ethereum){
+      setStatus("No veo MetaMask. Instálalo o abre en un navegador con MetaMask.", false);
+      throw new Error("No MetaMask");
+    }
+  }
+
+  async function refreshNetworkLabel(){
+    const net = await provider.getNetwork();
+    elNetwork.textContent = `${net.name} (chainId: ${net.chainId})`;
+    return net;
+  }
+
+  async function connect(){
+    requireMetaMask();
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner();
+    userAddress = await signer.getAddress();
+    elAccount.textContent = userAddress;
+
+    const net = await refreshNetworkLabel();
+
+    token = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
+    try{ decimals = await token.decimals(); }catch(e){}
+    try{ symbol = await token.symbol(); }catch(e){}
+
+    btnBalance.disabled = false;
+    btnSend.disabled = false;
+
+    if (net.chainId !== 11155111n){
+      setStatus("Conectado, pero NO estás en Sepolia. Usa ‘Cambiar a Sepolia’.", false);
+    } else {
+      setStatus(`Conectado ✅ Listo para usar ${symbol} en Sepolia.`);
+    }
+  }
+
+  async function switchToSepolia(){
+    requireMetaMask();
+    try{
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: SEPOLIA_CHAIN_ID }]
+      });
+      if(provider) await refreshNetworkLabel();
+      setStatus("Red cambiada a Sepolia ✅");
+    }catch(err){
+      setStatus("No pude cambiar de red (tal vez Sepolia no está agregada en tu MetaMask).", false);
+    }
+  }
+
+  async function readBalance(){
+    if(!token || !userAddress) return;
+    const raw = await token.balanceOf(userAddress);
+    const human = ethers.formatUnits(raw, decimals);
+    elBal.textContent = `${human} ${symbol}`;
+    setStatus("Balance leído ✅");
+  }
+
+  async function send(){
+    const to = document.getElementById("to").value.trim();
+    const amount = document.getElementById("amount").value.trim();
+    if(!to || !amount){
+      setStatus("Falta dirección destino o cantidad.", false);
+      return;
+    }
+
+    try{
+      const value = ethers.parseUnits(amount, decimals);
+      setStatus("Abre MetaMask para confirmar la transacción…");
+      const tx = await token.transfer(to, value);
+      elTx.textContent = tx.hash;
+      setStatus("Transacción enviada ✅ Espera confirmación…");
+      await tx.wait();
+      setStatus("Confirmada ✅");
+      await readBalance();
+    }catch(e){
+      setStatus("Transacción cancelada o falló (revisa gas/ETH de test y dirección).", false);
+    }
+  }
+
+  if(window.ethereum){
+    window.ethereum.on("accountsChanged", () => location.reload());
+    window.ethereum.on("chainChanged", () => location.reload());
+  }
+
+  btnConnect.onclick = connect;
+  btnSwitch.onclick  = switchToSepolia;
+  btnBalance.onclick = readBalance;
+  btnSend.onclick    = send;
+</script>
 </body>
 </html>
+
+
